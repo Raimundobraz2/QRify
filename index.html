@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRify — Gerador de QR Code</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- NAV -->
+        <nav>
+            <div class="logo">QR<span>ify</span></div>
+            <div class="nav-pills">
+                <div class="api-badge">
+                    <div class="api-dot"></div>API Online
+                </div>
+                <div class="nav-badge">✦ 100% Gratuito</div>
+            </div>
+        </nav>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-tag">✦ Powered by QR Server API</div>
+            <h1>Gere <em>QR Codes</em><br>em segundos</h1>
+            <p class="hero-sub">URLs, textos, Wi-Fi, vCards e mais — com logotipo da sua empresa e geração via API.</p>
+            <div class="api-info">Endpoint: <code>api.qrserver.com/v1/create-qr-code</code></div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num">∞</div>
+                <div class="stat-label">Requisições gratuitas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">6</div>
+                <div class="stat-label">Tipos de conteúdo</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">PNG/SVG</div>
+                <div class="stat-label">Formatos de saída</div>
+            </div>
+        </div>
+
+        <!-- LOGO UPLOAD SECTION -->
+        <div class="logo-section-card">
+            <div class="logo-section-title">
+                Logotipo da Empresa
+                <span>Novo</span>
+            </div>
+            <p class="logo-section-sub">Adicione o logo da sua empresa ao centro do QR Code. Recomendado: PNG com fundo
+                transparente.</p>
+
+            <div class="logo-grid">
+                <!-- Dropzone -->
+                <div class="logo-dropzone" id="logo-dropzone">
+                    <input type="file" id="logo-file" accept="image/*" onchange="handleLogoUpload(event)" />
+                    <div class="logo-dropzone-icon" id="dz-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round">
+                            <rect x="3" y="3" width="18" height="18" rx="3" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                    </div>
+                    <div class="logo-dropzone-text" id="dz-text">Clique ou<br>arraste aqui</div>
+                </div>
+
+                <!-- Controls -->
+                <div class="logo-controls">
+                    <div id="logo-preview-section" style="display:none">
+                        <div class="logo-preview-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            Logo carregado com sucesso
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="range-label">
+                            <label>Tamanho do Logo no QR</label>
+                            <div class="range-val" id="logo-size-display">25%</div>
+                        </div>
+                        <input type="range" id="logo-size" min="10" max="35" value="25" step="1"
+                            oninput="updateLogoSize(this.value)" />
+                    </div>
+
+                    <button class="btn-remove-logo" id="btn-remove-logo" onclick="removeLogo()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-1 14H6L5 6" />
+                            <path d="M10 11v6M14 11v6" />
+                        </svg>
+                        Remover Logo
+                    </button>
+
+                    <div class="logo-note">
+                        <strong>💡 Dica:</strong> Use imagens quadradas em PNG com fundo transparente para melhor
+                        resultado. O nível de correção de erros é ajustado automaticamente para <strong>H (30%)</strong>
+                        quando há logo, garantindo leitura perfeita.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN QR CARD -->
+        <div class="main-card">
+            <div class="card-grid">
+                <div class="form-section">
+
+                    <!-- Type tabs -->
+                    <div class="field-group">
+                        <label>Tipo de Conteúdo</label>
+                        <div class="type-tabs">
+                            <button class="type-tab active" data-type="url">URL</button>
+                            <button class="type-tab" data-type="text">Texto</button>
+                            <button class="type-tab" data-type="email">E-mail</button>
+                            <button class="type-tab" data-type="phone">Telefone</button>
+                            <button class="type-tab" data-type="wifi">Wi-Fi</button>
+                            <button class="type-tab" data-type="vcard">vCard</button>
+                        </div>
+                    </div>
+
+                    <!-- Main input -->
+                    <div class="field-group" id="main-field">
+                        <label id="main-label">URL</label>
+                        <input type="text" id="main-input" placeholder="https://exemplo.com" />
+                    </div>
+
+                    <!-- WiFi -->
+                    <div id="wifi-extra">
+                        <div class="row-2">
+                            <div class="field-group"><label>Rede (SSID)</label><input type="text" id="wifi-ssid"
+                                    placeholder="MinhaRede" /></div>
+                            <div class="field-group"><label>Senha</label><input type="text" id="wifi-pass"
+                                    placeholder="••••••••" /></div>
+                        </div>
+                        <div class="field-group"><label>Segurança</label>
+                            <select id="wifi-sec">
+                                <option value="WPA">WPA/WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="">Sem senha</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- vCard -->
+                    <div id="vcard-extra">
+                        <div class="row-2">
+                            <div class="field-group"><label>Nome completo</label><input type="text" id="vc-name"
+                                    placeholder="João Silva" /></div>
+                            <div class="field-group"><label>Empresa</label><input type="text" id="vc-org"
+                                    placeholder="Empresa LTDA" /></div>
+                        </div>
+                        <div class="row-2">
+                            <div class="field-group"><label>Telefone</label><input type="text" id="vc-phone"
+                                    placeholder="+244 000-000-000" /></div>
+                            <div class="field-group"><label>E-mail</label><input type="text" id="vc-email"
+                                    placeholder="joao@email.com" /></div>
+                        </div>
+                        <div class="field-group"><label>Website</label><input type="text" id="vc-url"
+                                placeholder="https://site.com" /></div>
+                    </div>
+
+                    <!-- Colors -->
+                    <div class="row-2">
+                        <div class="field-group">
+                            <label>Cor do QR Code</label>
+                            <div class="color-row">
+                                <input type="color" id="qr-color" value="#687EE3" />
+                                <input type="text" class="color-hex" id="qr-color-hex" value="#687EE3" maxlength="7" />
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Cor de Fundo</label>
+                            <div class="color-row">
+                                <input type="color" id="bg-color" value="#ffffff" />
+                                <input type="text" class="color-hex" id="bg-color-hex" value="#ffffff" maxlength="7" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Size -->
+                    <div class="field-group">
+                        <div class="range-label">
+                            <label>Tamanho do QR Code</label>
+                            <div class="range-val" id="size-display">256 × 256</div>
+                        </div>
+                        <input type="range" id="qr-size" min="64" max="600" value="256" step="8" />
+                    </div>
+
+                    <!-- Error correction -->
+                    <div class="field-group">
+                        <label>Correção de Erros <span id="ec-auto-note"
+                                style="color:var(--success);font-size:10px;display:none">(Auto: H com
+                                logo)</span></label>
+                        <div class="pills-row">
+                            <div class="pill" data-ec="L">L · 7%</div>
+                            <div class="pill active" data-ec="M">M · 15%</div>
+                            <div class="pill" data-ec="Q">Q · 25%</div>
+                            <div class="pill" data-ec="H">H · 30%</div>
+                        </div>
+                    </div>
+
+                    <!-- Format -->
+                    <div class="field-group">
+                        <label>Formato de Saída</label>
+                        <div class="pills-row">
+                            <div class="pill active" data-fmt="png">PNG</div>
+                            <div class="pill" data-fmt="svg">SVG</div>
+                            <div class="pill" data-fmt="eps">EPS</div>
+                        </div>
+                    </div>
+
+                    <button class="btn-generate" id="gen-btn" onclick="generateQR()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="3" height="3" />
+                            <rect x="18" y="14" width="3" height="3" />
+                            <rect x="14" y="18" width="3" height="3" />
+                            <rect x="18" y="18" width="3" height="3" />
+                        </svg>
+                        Gerar via API
+                    </button>
+                </div>
+
+                <!-- QR PREVIEW -->
+                <div class="qr-section">
+                    <div class="qr-frame" id="qr-frame">
+                        <div class="corner c-tl"></div>
+                        <div class="corner c-tr"></div>
+                        <div class="corner c-bl"></div>
+                        <div class="corner c-br"></div>
+                        <div id="qr-output">
+                            <div class="qr-placeholder">
+                                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1">
+                                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                                    <rect x="14" y="14" width="3" height="3" />
+                                    <rect x="18" y="14" width="3" height="3" />
+                                    <rect x="14" y="18" width="3" height="3" />
+                                    <rect x="18" y="18" width="3" height="3" />
+                                </svg>
+                                <p>Preencha e clique<br>em Gerar</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-url-box" id="api-url-box">
+                        <span class="method">GET</span> <span class="host" id="api-url-text"></span>
+                    </div>
+
+                    <button class="btn-action" id="dl-btn" onclick="downloadQR()" disabled>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                        </svg>
+                        Baixar <span id="dl-fmt">PNG</span>
+                    </button>
+                    <button class="btn-action" id="copy-btn" onclick="copyURL()" disabled>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg>
+                        Copiar URL da API
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /container -->
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+
+                <!-- Profile -->
+                <div class="footer-profile">
+                    <div class="avatar-ring">
+                        <div class="avatar-inner" id="footer-avatar">
+                            <!-- Placeholder SVG -->
+                             <img src="assts/usar.jpg" alt="">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="footer-name">Raimundo Bráz</div>
+                        <div class="footer-role">UI/UX Designer & Desenvolvedor web </div>
+                    </div>
+                    <div class="footer-tagline">Criando experiências digitais com design e tecnologia.</div>
+                </div>
+
+                <!-- Social links -->
+                <div class="social-grid">
+
+                    <a href="https://github.com/Raimundobraz2" target="_blank" class="social-btn sb-github">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                        </svg>
+                        <span>GitHub</span>
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/raimundo-br%C3%A1z-a52812234/" target="_blank" class="social-btn sb-linkedin">
+                       
+                        <span>LinkedIn</span>
+                    </a>
+
+                    <a href="https://www.instagram.com/wilson_bras1/" target="_blank" class="social-btn sb-instagram">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+
+                    <a href="https://www.facebook.com/robison.augustalsina" target="_blank" class="social-btn sb-facebook">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+
+                    <a href="https://x.com/Raimundo_braz1" target="_blank" class="social-btn sb-x">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.258 5.627 5.906-5.627zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <span>X / Twitter</span>
+                    </a>
+
+                    <a href="https://www.behance.net/raimundbrs" target="_blank" class="social-btn sb-behance">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M6.938 4.503c.702 0 1.34.06 1.92.188.577.13 1.07.33 1.485.61.41.28.733.65.96 1.12.225.47.34 1.05.34 1.73 0 .74-.17 1.36-.507 1.86-.338.5-.837.9-1.502 1.22.906.26 1.576.72 2.022 1.37.448.66.665 1.45.665 2.36 0 .75-.13 1.39-.41 1.93-.28.55-.67 1-.1 1.35-.448.37-.99.64-1.622.82-.63.18-1.297.27-2.01.27H0V4.51h6.938v-.007zM16.94 6.007h5.82V7.5H16.94V6.007zM3.708 10.47h2.66c.647 0 1.173-.14 1.575-.43.403-.29.604-.75.604-1.38 0-.327-.054-.596-.163-.806-.11-.21-.263-.374-.46-.492a1.91 1.91 0 00-.665-.26 3.98 3.98 0 00-.802-.075H3.708v3.443zm13.232 1.163c-.595 0-1.093.157-1.498.47-.403.316-.642.79-.716 1.42h4.307c-.056-.64-.286-1.113-.69-1.42-.404-.312-.9-.47-1.403-.47zm-13.232 2.47h3.02c.36 0 .7-.04 1.016-.12.315-.08.586-.204.812-.374.226-.17.403-.39.53-.665.127-.275.19-.604.19-.99 0-.75-.215-1.29-.643-1.625-.43-.335-1.01-.5-1.74-.5H3.708v4.274zm13.418 1.27c.393 0 .75-.094 1.07-.28.32-.188.573-.504.755-.95h2.47c-.393 1.1-1.003 1.918-1.83 2.45-.827.53-1.82.8-2.978.8-.83 0-1.576-.13-2.245-.39-.67-.263-1.237-.633-1.704-1.11-.467-.48-.823-1.054-1.073-1.73-.25-.674-.373-1.42-.373-2.235 0-.79.12-1.52.363-2.18.24-.663.587-1.23 1.04-1.703.455-.477 1.007-.847 1.657-1.11.652-.263 1.386-.396 2.2-.396.92 0 1.72.17 2.404.51.686.34 1.253.806 1.7 1.4.45.594.774 1.282.975 2.065.2.784.27 1.62.203 2.514h-7.08c.04.76.27 1.34.694 1.743.427.4.97.6 1.63.6z" />
+                        </svg>
+                        <span>Behance</span>
+                    </a>
+                </div>
+
+                <!-- Footer bottom -->
+                <div class="footer-bottom">
+                    <div class="footer-logo-line">
+                        <div class="footer-logo-sm">QRify</div>
+                    </div>
+                    <div class="footer-copy">© 2025 · Todos os direitos reservados</div>
+                    <div class="footer-made">Feito com <span>♥</span> usando QR Server API</div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span id="toast-icon">✓</span>
+        <span id="toast-msg">Pronto!</span>
+    </div>
+<script src="js/script.js"></script>
+</body>
+</html>
