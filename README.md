@@ -1,5 +1,5 @@
 # Gerador de QR Code - Versão 2
-![Texto alternativo](assets/usar.jpg)
+![Texto alternativo](assets/Macbook-Air-q-rify-dusky.vercel.app%20(1).png)
 
 
 Este é o projeto de criação de QRCodes de nome QRify que permite aos usuários gerar códigos QR personalizados para diversos fins. Utilizando uma interface simples e intuitiva, o aplicativo facilita a criação rápida de URLs, textos, Wi-Fi, vCards e mais — com logotipo da sua empresa e geração via API.
