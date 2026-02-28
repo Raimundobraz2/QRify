@@ -26,12 +26,5 @@ Este é o projeto de criação de QRCodes de nome QRify que permite aos usuário
 5. **Baixe a imagem** do QR Code para uso.
 
 ## Link do projecto para testar
-[https://raimundobraz2.github.io/Gerador-de-QRCODE/](https://raimundobraz2.github.io/Gerador-de-QRCODE/)
+[https://q-rify-dusky.vercel.app/](https://q-rify-dusky.vercel.app/)
 
-## OBS
-Algumaas funcionalidades citadas ainda estão na fase de desenvolvimento
-
-## Exemplo de Uso
-
-```javascript
-https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=SeuTextoAqui
